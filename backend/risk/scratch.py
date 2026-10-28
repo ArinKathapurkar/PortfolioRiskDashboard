@@ -1,6 +1,7 @@
 import sys, pathlib
 # Allow running this file directly (python scratch.py); puts the repo root
 # on sys.path so the `backend` package and `config` resolve.
+
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
 
 from backend.risk.returns import get_returns
@@ -37,3 +38,16 @@ print(f"difference:                {vol_from_class - vol_direct:.2e}   # expect 
 print("empirical vol: ", p.volatility())
 print("from cov vol:  ", p.volatility_from_cov())
 print("difference:    ", abs(p.volatility() - p.volatility_from_cov()))
+
+print("\n=== VAR Calculations ===")
+print("Historical:", p.var_historical(0.95))
+print("Parametric:", p.var_parametric(0.95))
+print("Monte Carlo:", p.var_monte_carlo(0.95))
+
+print("\n=== CVAR Calculations ===  # expect each <= its VaR above")
+print("Historical:", p.cvar_historical(0.95))
+print("Parametric:", p.cvar_parametric(0.95))
+print("Monte Carlo:", p.cvar_monte_carlo(0.95))
+
+print("\n=== Diversification ===")
+print("diversification ratio:", p.diversification_ratio(), "  # expect > 1")

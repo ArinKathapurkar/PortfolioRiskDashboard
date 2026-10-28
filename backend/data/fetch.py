@@ -5,11 +5,9 @@ import datetime as dt
 from backend.data.cache import load_or_fetch
 
 START = "2021-01-01"
-END = dt.date.today().isoformat()
 
-
-
-def fetch_prices(portfolio, start = START, end = END): 
+def fetch_prices(portfolio, start = START):
+    end = dt.date.today().isoformat()
     data = yf.download(portfolio, start=start, end=end, auto_adjust = True)
     
     if isinstance(data.columns, pd.MultiIndex):
