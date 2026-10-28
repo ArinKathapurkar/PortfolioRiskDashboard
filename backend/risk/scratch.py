@@ -1,3 +1,8 @@
+import sys, pathlib
+# Allow running this file directly (python scratch.py); puts the repo root
+# on sys.path so the `backend` package and `config` resolve.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+
 from backend.risk import returns as r, metrics as m
 import config   # your weights
 
