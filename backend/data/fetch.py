@@ -1,8 +1,8 @@
 import pandas as pd 
 import yfinance as yf 
-import universe
+from backend.data import universe
 import datetime as dt
-from cache import load_or_fetch    
+from backend.data.cache import load_or_fetch
 
 START = "2021-01-01"
 END = dt.date.today().isoformat()
