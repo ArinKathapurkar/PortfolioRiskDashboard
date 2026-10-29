@@ -11,23 +11,30 @@ CACHE_DIR = Path(__file__).parent
 PRICES_PATH = CACHE_DIR / "prices.parquet"
 
 
-def _is_fresh(path: Path) -> bool:
-    """Fresh = file exists and already includes the last completed weekday."""
+def _last_completed_weekday(today: dt.date) -> dt.date:
+    """Most recent weekday strictly before today. fetch_prices excludes today
+    (yfinance's end date is exclusive, and today's bar is partial anyway)."""
+    day = today - dt.timedelta(days=1)
+    while day.weekday() >= 5:      # 5=Sat, 6=Sun
+        day -= dt.timedelta(days=1)
+    return day
+
+
+def _is_fresh(path: Path, today: dt.date | None = None) -> bool:
+    """Fresh = file was written today, or already includes the last completed weekday."""
     if not path.exists():
         return False
+    today = today or dt.date.today()
+
+    # Already fetched today: covers market holidays, where the data can never
+    # reach the expected date and we'd otherwise refetch on every call.
+    if dt.date.fromtimestamp(path.stat().st_mtime) == today:
+        return True
+
     cached = pd.read_parquet(path)
     if cached.empty:
         return False
-    last_cached = cached.index.max().date()
-
-    # Most recent weekday (Mon–Fri). Doesn't account for market holidays —
-    # worst case that triggers one extra harmless refetch.
-    today = dt.date.today()
-    last_weekday = today
-    while last_weekday.weekday() >= 5:      # 5=Sat, 6=Sun
-        last_weekday -= dt.timedelta(days=1)
-
-    return last_cached >= last_weekday
+    return cached.index.max().date() >= _last_completed_weekday(today)
 
 
 def load_or_fetch(fetch_fn, path: Path = PRICES_PATH, force: bool = False):
@@ -40,7 +47,7 @@ def load_or_fetch(fetch_fn, path: Path = PRICES_PATH, force: bool = False):
     if not force and _is_fresh(path):
         return pd.read_parquet(path)
 
-    df = fetch_fn()          
-    df.to_parquet(path)    
+    df = fetch_fn()
+    df.to_parquet(path)
     return df
 

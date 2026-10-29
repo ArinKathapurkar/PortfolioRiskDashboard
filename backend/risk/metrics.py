@@ -1,4 +1,5 @@
 import pandas as pd
+from config import RISK_FREE_RATE
 
 
 def annualized_volatility(returns):
@@ -11,10 +12,9 @@ def stock_betas(returns, benchmark_col="SPY"):
 
 
 def stock_sharpe(returns, benchmark_col="SPY"):
-    annual_rf = .046
     holdings = returns.drop(columns=benchmark_col)
     annualized_returns = holdings.mean() * 252
-    return (annualized_returns - annual_rf) / annualized_volatility(holdings)
+    return (annualized_returns - RISK_FREE_RATE) / annualized_volatility(holdings)
 
 
 def stock_max_drawdown(returns, benchmark_col="SPY"):

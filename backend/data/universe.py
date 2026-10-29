@@ -1,5 +1,4 @@
-
-#change tickers to match portfolio of interest 
+#change tickers to match portfolio of interest
 tickers = [
     # Information Technology
     "AAPL", "NVDA", "AMD", "ZS",
@@ -48,4 +47,3 @@ sector_map = {
     "NEM":  "Materials",
     "TLT":  "Fixed Income",
 }
-

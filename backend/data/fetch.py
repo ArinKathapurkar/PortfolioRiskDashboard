@@ -1,5 +1,5 @@
-import pandas as pd 
-import yfinance as yf 
+import pandas as pd
+import yfinance as yf
 from backend.data import universe
 import datetime as dt
 from backend.data.cache import load_or_fetch
@@ -8,8 +8,8 @@ START = "2021-01-01"
 
 def fetch_prices(portfolio, start = START):
     end = dt.date.today().isoformat()
-    data = yf.download(portfolio, start=start, end=end, auto_adjust = True)
-    
+    data = yf.download(portfolio, start=start, end=end, auto_adjust=True)
+
     if isinstance(data.columns, pd.MultiIndex):
         prices = data["Close"]
     else:
@@ -20,7 +20,7 @@ def fetch_prices(portfolio, start = START):
 
 def get_prices(force: bool = False):
     portfolio = universe.tickers + [universe.benchmark]
-    return load_or_fetch(lambda: fetch_prices(portfolio), force=force)  
+    return load_or_fetch(lambda: fetch_prices(portfolio), force=force)
 
 
 if __name__ == "__main__":
@@ -28,6 +28,5 @@ if __name__ == "__main__":
     print(prices)
     print(prices.shape)
     print(prices.index.max())
-    returns = prices.pct_change()
+    returns = prices.pct_change(fill_method=None)
     print(returns)
-

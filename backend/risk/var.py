@@ -1,7 +1,7 @@
-#used to calculate value at risk / conditional value at risk 
+#used to calculate value at risk / conditional value at risk
 import numpy as np
 from scipy.stats import norm
- 
+
 def historical_var(port_returns, confidence):
     return np.percentile(port_returns, 100 - (confidence * 100))
 
@@ -23,7 +23,7 @@ def simulate_port_returns(holdings, weights, simulations=10000, cov=None, seed=N
 def monte_carlo_var(holdings, weights, confidence, simulations=10000, cov=None, seed=None):
     sims = simulate_port_returns(holdings, weights, simulations, cov=cov, seed=seed)
     return historical_var(sims, confidence)
-        
+
 def cvar(returns, confidence=.95):
     var = historical_var(returns, confidence)
     return returns[returns <= var].mean()
@@ -32,11 +32,3 @@ def cvar(returns, confidence=.95):
 def parametric_cvar(port_returns, confidence=.95):
     z = norm.ppf(1 - confidence)
     return port_returns.mean() - port_returns.std() * norm.pdf(z) / (1 - confidence)
-
-
-
-
-    
-        
-    
-    
